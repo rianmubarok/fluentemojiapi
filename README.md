@@ -46,51 +46,48 @@ GET /emojis
 ```json
 [
   {
-    "name": "1st-place-medal-color",
-    "unicode": null,
-    "path": "/svg/1st-place-medal-color.svg"
-  },
-  {
-    "name": "2nd-place-medal-color",
-    "unicode": null,
-    "path": "/svg/2nd-place-medal-color.svg"
-  },
-  {
-    "name": "3rd-place-medal-color",
-    "unicode": null,
-    "path": "/svg/3rd-place-medal-color.svg"
+    "name": "1st place medal",
+    "slug": "1st-place-medal",
+    "unicode": "1f947",
+    "group": "Activities",
+    "glyph": "🥇",
+    "keywords": ["1st place medal", "first", "gold", "medal"],
+    "path": "/svg/1st-place-medal-color.svg",
+    "variants": ["/svg/1st-place-medal-color.svg"]
   }
 ]
 ```
 
 ---
 
-### 2. Search emojis by name
+### 2. Search emojis by name/slug and filters
 
 ```
 GET /emojis/search?q=medal
 ```
 
-**Example response:**
+Supported filters (combine as needed):
 
-```json
-[
-  {
-    "name": "1st-place-medal-color",
-    "unicode": null,
-    "path": "/svg/1st-place-medal-color.svg"
-  },
-  {
-    "name": "2nd-place-medal-color",
-    "unicode": null,
-    "path": "/svg/2nd-place-medal-color.svg"
-  }
-]
+- `q`: substring on name or slug (case-insensitive)
+- `unicode`: exact unicode (e.g., `1f947`)
+- `group`: exact group/category (e.g., `Activities`)
+- `keyword`: substring across keywords
+- `glyph`: exact glyph (e.g., 🥇)
+- `hasVariants`: `true` or `false`
+
+Examples:
+
+```
+GET /emojis/search?group=Smileys%20%26%20Emotion
+GET /emojis/search?unicode=1f947
+GET /emojis/search?keyword=medal
+GET /emojis/search?glyph=%F0%9F%A5%87
+GET /emojis/search?hasVariants=true
 ```
 
 ---
 
-### 3. Get emoji details by name
+### 3. Get emoji details by name or slug
 
 ```
 GET /emojis/:name
@@ -99,17 +96,36 @@ GET /emojis/:name
 **Example request:**
 
 ```
-GET /emojis/1st-place-medal-color
+GET /emojis/1st-place-medal
 ```
 
 **Example response:**
 
 ```json
 {
-  "name": "1st-place-medal-color",
-  "unicode": null,
-  "path": "/svg/1st-place-medal-color.svg"
+  "name": "1st place medal",
+  "slug": "1st-place-medal",
+  "unicode": "1f947",
+  "group": "Activities",
+  "glyph": "🥇",
+  "keywords": ["1st place medal", "first", "gold", "medal"],
+  "path": "/svg/1st-place-medal-color.svg",
+  "variants": ["/svg/1st-place-medal-color.svg"]
 }
+```
+
+---
+
+### 4. Get emoji by exact slug
+
+```
+GET /emojis/by-slug/:slug
+```
+
+Example:
+
+```
+GET /emojis/by-slug/alien
 ```
 
 ---
