@@ -1,13 +1,14 @@
 {
   "name": "fluentemojiapi",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Fluent Emoji API server",
+  "main": "api.js",
   "scripts": {
+    "start": "node api.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Muhammad Fitrian Mubarok",
   "license": "ISC",
   "type": "module",
   "dependencies": {
