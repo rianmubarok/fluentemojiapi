@@ -8,30 +8,11 @@ yarn-error.log*
 pnpm-debug.log*
 
 # ============================
-# Build / Output
-# ============================
-dist/
-build/
-.next/
-out/
-.vercel/
-.netlify/
-
-# ============================
-# Environment
-# ============================
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# ============================
 # OS / Editor Junk Files
 # ============================
 .DS_Store
 Thumbs.db
 *.swp
 *.swo
-*.idea/
+.idea/
 .vscode/
