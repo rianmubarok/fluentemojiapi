@@ -44,11 +44,16 @@ function modifySvgWithSize(svgContent, size) {
     return svgContent; // Return original if invalid size
   }
 
-  // Modify SVG content to set width and height
-  return svgContent.replace(
-    /<svg([^>]*)>/,
-    `<svg$1 width="${widthNum}" height="${heightNum}">`
-  );
+  // Modify SVG content to replace existing width and height attributes
+  return svgContent.replace(/<svg([^>]*?)>/, (match, attributes) => {
+    // Remove existing width and height attributes
+    let cleanAttributes = attributes
+      .replace(/\s*width\s*=\s*["'][^"']*["']/gi, "")
+      .replace(/\s*height\s*=\s*["'][^"']*["']/gi, "");
+
+    // Add new width and height attributes
+    return `<svg${cleanAttributes} width="${widthNum}" height="${heightNum}">`;
+  });
 }
 
 // Endpoint: serve SVG files with optional size parameter
