@@ -24,8 +24,63 @@ try {
   process.exit(1);
 }
 
-// Serve SVG files
-app.use("/svg", express.static(path.join(__dirname, "data/svg")));
+// Helper function to modify SVG with size parameters
+function modifySvgWithSize(svgContent, size) {
+  if (!size) return svgContent;
+
+  // Parse size parameter (can be "width", "height", or "widthxheight")
+  let width, height;
+  if (size.includes("x")) {
+    [width, height] = size.split("x");
+  } else {
+    width = height = size;
+  }
+
+  // Validate size values (must be positive numbers)
+  const widthNum = parseInt(width);
+  const heightNum = parseInt(height);
+
+  if (isNaN(widthNum) || isNaN(heightNum) || widthNum <= 0 || heightNum <= 0) {
+    return svgContent; // Return original if invalid size
+  }
+
+  // Modify SVG content to set width and height
+  return svgContent.replace(
+    /<svg([^>]*)>/,
+    `<svg$1 width="${widthNum}" height="${heightNum}">`
+  );
+}
+
+// Endpoint: serve SVG files with optional size parameter
+app.get("/svg/:filename", (req, res) => {
+  const { filename } = req.params;
+  const { size } = req.query;
+
+  // Validate filename (basic security check)
+  if (
+    !filename.endsWith(".svg") ||
+    filename.includes("..") ||
+    filename.includes("/")
+  ) {
+    return res.status(400).send("Invalid filename");
+  }
+
+  try {
+    const filePath = path.join(__dirname, "data/svg", filename);
+    const svgContent = readFileSync(filePath, "utf-8");
+
+    if (size) {
+      const modifiedSvg = modifySvgWithSize(svgContent, size);
+      res.setHeader("Content-Type", "image/svg+xml");
+      res.send(modifiedSvg);
+    } else {
+      res.setHeader("Content-Type", "image/svg+xml");
+      res.send(svgContent);
+    }
+  } catch (err) {
+    res.status(404).send("SVG file not found: " + filename);
+  }
+});
 
 // Endpoint: get all emojis
 app.get("/emojis", (req, res) => {
@@ -121,9 +176,11 @@ app.get("/emojis/by-slug/:slug", (req, res) => {
   res.status(404).json({ error: "Emoji not found" });
 });
 
-// Endpoint: get SVG based on unicode
-app.get("/svg/:unicode", (req, res) => {
+// Endpoint: get SVG based on unicode with optional size parameter
+app.get("/svg/unicode/:unicode", (req, res) => {
   const unicodeReq = req.params.unicode.toLowerCase();
+  const { size } = req.query;
+
   const emoji = indexData.find((e) => {
     // check main unicode
     if (e.unicode && e.unicode.toLowerCase() === unicodeReq) return true;
@@ -135,11 +192,26 @@ app.get("/svg/:unicode", (req, res) => {
   });
 
   if (emoji) {
-    const filePath = path.join(__dirname, "data", emoji.path);
-    return res.sendFile(filePath);
-  }
+    try {
+      const filePath = path.join(__dirname, "data", emoji.path);
+      const svgContent = readFileSync(filePath, "utf-8");
 
-  res.status(404).send("Emoji SVG not found for unicode: " + unicodeReq);
+      if (size) {
+        const modifiedSvg = modifySvgWithSize(svgContent, size);
+        res.setHeader("Content-Type", "image/svg+xml");
+        res.send(modifiedSvg);
+      } else {
+        res.setHeader("Content-Type", "image/svg+xml");
+        res.send(svgContent);
+      }
+    } catch (err) {
+      res
+        .status(404)
+        .send("Emoji SVG file not found for unicode: " + unicodeReq);
+    }
+  } else {
+    res.status(404).send("Emoji SVG not found for unicode: " + unicodeReq);
+  }
 });
 
 // Default route (mini docs)
@@ -183,8 +255,20 @@ app.get("/", (req, res) => {
         description: "Access raw SVG (color style)",
       },
       {
-        path: "/svg/1f947",
+        path: "/svg/alien-color.svg?size=64",
+        description: "Access SVG with custom size (64x64)",
+      },
+      {
+        path: "/svg/alien-color.svg?size=100x50",
+        description: "Access SVG with custom dimensions (100x50)",
+      },
+      {
+        path: "/svg/unicode/1f947",
         description: "Get SVG by unicode (supports skintones)",
+      },
+      {
+        path: "/svg/unicode/1f947?size=32",
+        description: "Get SVG by unicode with custom size",
       },
     ],
   });
