@@ -61,17 +61,22 @@ app.get("/svg/:filename", (req, res) => {
   const { filename } = req.params;
   const { size } = req.query;
 
+  // Decode URL-encoded filename for deployment compatibility
+  const decodedFilename = decodeURIComponent(filename);
+
   // Validate filename (basic security check)
   if (
-    !filename.endsWith(".svg") ||
-    filename.includes("..") ||
-    filename.includes("/")
+    !decodedFilename.endsWith(".svg") ||
+    decodedFilename.includes("..") ||
+    decodedFilename.includes("/") ||
+    decodedFilename.includes("\\")
   ) {
-    return res.status(400).send("Invalid filename");
+    console.log("Invalid filename:", decodedFilename);
+    return res.status(400).send("Invalid filename: " + decodedFilename);
   }
 
   try {
-    const filePath = path.join(__dirname, "data/svg", filename);
+    const filePath = path.join(__dirname, "data/svg", decodedFilename);
     const svgContent = readFileSync(filePath, "utf-8");
 
     if (size) {
@@ -83,7 +88,8 @@ app.get("/svg/:filename", (req, res) => {
       res.send(svgContent);
     }
   } catch (err) {
-    res.status(404).send("SVG file not found: " + filename);
+    console.log("SVG file not found:", decodedFilename, "Error:", err.message);
+    res.status(404).send("SVG file not found: " + decodedFilename);
   }
 });
 
@@ -210,11 +216,20 @@ app.get("/svg/unicode/:unicode", (req, res) => {
         res.send(svgContent);
       }
     } catch (err) {
+      console.log(
+        "Unicode SVG file not found:",
+        unicodeReq,
+        "Path:",
+        emoji.path,
+        "Error:",
+        err.message
+      );
       res
         .status(404)
         .send("Emoji SVG file not found for unicode: " + unicodeReq);
     }
   } else {
+    console.log("Unicode not found:", unicodeReq);
     res.status(404).send("Emoji SVG not found for unicode: " + unicodeReq);
   }
 });
