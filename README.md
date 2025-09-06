@@ -9,7 +9,8 @@ This project provides endpoints to list, search, and retrieve emoji details.
 
 - Serve Fluent Emoji SVG files.
 - JSON endpoint with emoji metadata.
-- Search emojis by name.
+- Search emojis by name, unicode, group, keywords, and more.
+- Get SVG files directly by unicode (supports skintone variants).
 - Lightweight and easy to deploy (Express.js).
 
 ---
@@ -127,6 +128,41 @@ Example:
 ```
 GET /emojis/by-slug/alien
 ```
+
+---
+
+### 5. Get SVG file by unicode
+
+```
+GET /svg/:unicode
+```
+
+This endpoint allows you to retrieve SVG files directly using unicode values. It supports both main unicode and skintone variants.
+
+**Examples:**
+
+```bash
+# Get SVG for 1st place medal (main unicode)
+GET /svg/1f947
+
+# Get SVG for artist with light skin tone
+GET /svg/1f9d1 1f3fb 200d 1f3a8
+
+# Get SVG for thumbs up with medium-dark skin tone
+GET /svg/1f44d 1f3fe
+```
+
+**Features:**
+
+- Case-insensitive unicode matching
+- Supports skintone variants (unicodeSkintones array)
+- Returns the actual SVG file content
+- Returns 404 if unicode not found
+
+**Response:**
+
+- Success: SVG file content with appropriate content-type
+- Error: `404` with message "Emoji SVG not found for unicode: [unicode]"
 
 ---
 

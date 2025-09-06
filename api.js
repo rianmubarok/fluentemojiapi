@@ -121,6 +121,27 @@ app.get("/emojis/by-slug/:slug", (req, res) => {
   res.status(404).json({ error: "Emoji not found" });
 });
 
+// Endpoint: get SVG based on unicode
+app.get("/svg/:unicode", (req, res) => {
+  const unicodeReq = req.params.unicode.toLowerCase();
+  const emoji = indexData.find((e) => {
+    // check main unicode
+    if (e.unicode && e.unicode.toLowerCase() === unicodeReq) return true;
+    // check skintone unicodes (array)
+    if (Array.isArray(e.unicodeSkintones)) {
+      return e.unicodeSkintones.some((u) => u.toLowerCase() === unicodeReq);
+    }
+    return false;
+  });
+
+  if (emoji) {
+    const filePath = path.join(__dirname, "data", emoji.path);
+    return res.sendFile(filePath);
+  }
+
+  res.status(404).send("Emoji SVG not found for unicode: " + unicodeReq);
+});
+
 // Default route (mini docs)
 app.get("/", (req, res) => {
   res.json({
@@ -160,6 +181,10 @@ app.get("/", (req, res) => {
       {
         path: "/svg/alien-color.svg",
         description: "Access raw SVG (color style)",
+      },
+      {
+        path: "/svg/1f947",
+        description: "Get SVG by unicode (supports skintones)",
       },
     ],
   });
