@@ -56,42 +56,8 @@ function modifySvgWithSize(svgContent, size) {
   });
 }
 
-// Endpoint: serve SVG files with optional size parameter
-app.get("/svg/:filename", (req, res) => {
-  const { filename } = req.params;
-  const { size } = req.query;
-
-  // Decode URL-encoded filename for deployment compatibility
-  const decodedFilename = decodeURIComponent(filename);
-
-  // Validate filename (basic security check)
-  if (
-    !decodedFilename.endsWith(".svg") ||
-    decodedFilename.includes("..") ||
-    decodedFilename.includes("/") ||
-    decodedFilename.includes("\\")
-  ) {
-    console.log("Invalid filename:", decodedFilename);
-    return res.status(400).send("Invalid filename: " + decodedFilename);
-  }
-
-  try {
-    const filePath = path.join(__dirname, "data/svg", decodedFilename);
-    const svgContent = readFileSync(filePath, "utf-8");
-
-    if (size) {
-      const modifiedSvg = modifySvgWithSize(svgContent, size);
-      res.setHeader("Content-Type", "image/svg+xml");
-      res.send(modifiedSvg);
-    } else {
-      res.setHeader("Content-Type", "image/svg+xml");
-      res.send(svgContent);
-    }
-  } catch (err) {
-    console.log("SVG file not found:", decodedFilename, "Error:", err.message);
-    res.status(404).send("SVG file not found: " + decodedFilename);
-  }
-});
+// Serve SVG files statically (for direct file access)
+app.use("/svg", express.static(path.join(__dirname, "data/svg")));
 
 // Endpoint: get all emojis
 app.get("/emojis", (req, res) => {
@@ -188,7 +154,7 @@ app.get("/emojis/by-slug/:slug", (req, res) => {
 });
 
 // Endpoint: get SVG based on unicode with optional size parameter
-app.get("/svg/unicode/:unicode", (req, res) => {
+app.get("/svg/:unicode", (req, res) => {
   const unicodeReq = req.params.unicode.toLowerCase();
   const { size } = req.query;
 
@@ -205,15 +171,16 @@ app.get("/svg/unicode/:unicode", (req, res) => {
   if (emoji) {
     try {
       const filePath = path.join(__dirname, "data", emoji.path);
-      const svgContent = readFileSync(filePath, "utf-8");
 
       if (size) {
+        // Read and modify SVG with size parameter
+        const svgContent = readFileSync(filePath, "utf-8");
         const modifiedSvg = modifySvgWithSize(svgContent, size);
         res.setHeader("Content-Type", "image/svg+xml");
         res.send(modifiedSvg);
       } else {
-        res.setHeader("Content-Type", "image/svg+xml");
-        res.send(svgContent);
+        // Send file directly for better performance
+        res.sendFile(filePath);
       }
     } catch (err) {
       console.log(
@@ -275,19 +242,11 @@ app.get("/", (req, res) => {
         description: "Access raw SVG (color style)",
       },
       {
-        path: "/svg/alien-color.svg?size=64",
-        description: "Access SVG with custom size (64x64)",
-      },
-      {
-        path: "/svg/alien-color.svg?size=100x50",
-        description: "Access SVG with custom dimensions (100x50)",
-      },
-      {
-        path: "/svg/unicode/1f947",
+        path: "/svg/1f947",
         description: "Get SVG by unicode (supports skintones)",
       },
       {
-        path: "/svg/unicode/1f947?size=32",
+        path: "/svg/1f947?size=32",
         description: "Get SVG by unicode with custom size",
       },
     ],
