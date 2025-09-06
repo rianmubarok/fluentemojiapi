@@ -192,6 +192,17 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+Help keep FluentEmojiAPI running and continuously improved!
+
+Your support helps with:
+
+- Server hosting costs
+- Domain maintenance
+- API improvements
+- New features development
+
+Every contribution, no matter how small, makes a difference and keeps this API free for everyone to use!
+
 ## ![bug](https://fluentemojiapi-production.up.railway.app/svg/1f41b?size=24) Issues
 
 Found a bug or have a feature request? Please open an [issue](https://github.com/rianmubarok/fluentemojiapi/issues) with detailed information.
@@ -199,6 +210,10 @@ Found a bug or have a feature request? Please open an [issue](https://github.com
 ## ![star](https://fluentemojiapi-production.up.railway.app/svg/2b50?size=24) Support
 
 If this project helps you, please consider giving it a ![star](https://fluentemojiapi-production.up.railway.app/svg/2b50?size=16) on GitHub!
+
+Buy me a mie ayam on ![steaming_bowl](https://fluentemojiapi-production.up.railway.app/svg/1f35c?size=16)
+
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/rianmubarok)
 
 ---
 
