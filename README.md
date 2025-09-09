@@ -161,6 +161,24 @@ GET /svg/1f44d 1f3fe
 - Returns the actual SVG file content
 - Returns 404 if unicode not found
 
+Optional query parameters:
+
+- `size`: set output SVG dimensions. Accepts either a single number (applies to both width and height) or `WIDTHxHEIGHT`.
+
+Examples:
+
+```bash
+# Square size
+GET /svg/1f947?size=24
+
+# Custom width x height
+GET /svg/1f947?size=32x20
+```
+
+Note:
+
+- `?size=` is supported only on the `/svg/:unicode` endpoint (not on direct file paths like `/svg/alien-color.svg`).
+
 **Response:**
 
 - Success: SVG file content with appropriate content-type
@@ -181,6 +199,27 @@ fluentemojiapi/
 ```
 
 ---
+
+## Easily embed in your GitHub README
+
+You can use this API directly in your project README or any Markdown/HTML site.
+
+Markdown example:
+
+```md
+![handshake](https://fluentemojiapi-production.up.railway.app/svg/1f91d?size=24)
+```
+
+HTML example:
+
+```html
+<img
+  src="https://fluentemojiapi-production.up.railway.app/svg/1f600?size=32x32"
+  alt="grinning face"
+/>
+```
+
+Replace the unicode with the emoji you need and adjust `?size=` as desired.
 
 ## ![handshake](https://fluentemojiapi-production.up.railway.app/svg/1f91d?size=24) Contributing
 
